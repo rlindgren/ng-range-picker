@@ -19,7 +19,7 @@ angular.module('rangePicker', [])
           <div class="range-arrow"></div>
         </div>
         <div class="range-input" ng-show="$picker.editable">
-          <input class="form-control {{ $picker.inputClass }}" type="text" ng-click="$picker.openFor('startDate')" value="{{ $picker.inputValue() }}" />
+          <input class="form-control {{ $picker.inputClass }}" type="text" ng-keyup="$picker.inputChanged($event)" ng-click="$picker.openFor('startDate')" value="{{ $picker.inputValue() }}" placeholder="{{ $picker.startPlaceholder + $picker.separator + $picker.endPlaceholder }}" />
         </div>
       </div>
       <div class="range-display-calendar {{$picker.placement}}" id="{{$picker._id}}" ng-class="{inline: $picker.inline}" ng-show="$picker.shown">
@@ -216,6 +216,7 @@ angular.module('rangePicker', [])
   controller: function ($scope, $element, $timeout, rangePickerConfig) {
     this._id = 'range_picker_' + (++rangePickerConfig._currentId);
     this.calendarEl;
+    this.inputEl = $element.find('.range-input input');
     this.setLastModel = () => {
       this.lastModel = { startDate: this.ngModel && this.ngModel.startDate, endDate: this.ngModel && this.ngModel.endDate };
     };
@@ -283,21 +284,38 @@ angular.module('rangePicker', [])
     
     this.inputValue = () => {
       let ret = '';
-      if (this.ngModel.startDate) {
-        ret += moment(this.ngModel.startDate).format(this.displayFormat);
-      } else {
-        ret += this.startPlaceholder;
-      }
       
-      ret += this.separator;
-      
-      if (this.ngModel.endDate) {
-        ret += moment(this.ngModel.endDate).format(this.displayFormat);
-      } else {
-        ret += this.endPlaceholder;
+      if (this.ngModel.startDate || this.ngModel.endDate) {
+        if (this.ngModel.startDate) {
+          ret += moment(this.ngModel.startDate).format(this.displayFormat);
+        } else {
+          ret += this.startPlaceholder;
+        }
+        
+        ret += this.separator;
+        
+        if (this.ngModel.endDate) {
+          ret += moment(this.ngModel.endDate).format(this.displayFormat);
+        } else {
+          ret += this.endPlaceholder;
+        } 
       }
       
       return ret;
+    };
+    
+    this.inputChanged = ($event) => {
+      let [start, end] = $event.target.value.split(this.separator);
+      start = moment(start);
+      end = moment(end);
+      
+      if (start.isValid()) {
+        this.ngModel.startDate = start;
+      }
+      
+      if (end.isValid()) {
+        this.ngModel.endDate = end;
+      }
     };
     
     this.show = () => {
@@ -323,6 +341,9 @@ angular.module('rangePicker', [])
     this.openFor = (date) => {
       this.targetDate = date;
       this.displayDate = this.ngModel[this.targetDate] ? moment(this.ngModel[this.targetDate]) : moment();
+      if (!this.displayDate.isValid()) {
+        this.displayDate = moment();
+      }
       this.switchView('days');
       this.showDays = true;
       this.show();
@@ -345,8 +366,6 @@ angular.module('rangePicker', [])
           this.calendarEl = $element.find('#' + this._id);
           this.calendarEl.css(this.positionCalendarRelative());
         });
-        
-        console.log('placing relative')
       }
     };
     
@@ -374,6 +393,7 @@ angular.module('rangePicker', [])
           this.hide();
         }
       }
+      this.inputEl.val(this.inputValue());
     };
     
     this.isValid = () => {
