@@ -115,7 +115,7 @@ angular.module('rangePicker', [])
   inputClass: ''
 })
 .component('rangePickerInput', {
-  template: '<input type="text" class="form-control {{ $ctrl.inputClass }}" ng-keyup="$ctrl.parseValue()" placeholder="{{ $ctrl.placeholder }}" ng-click="$ctrl.pickerCtrl.openFor($ctrl.id)" ng-model-options="{ allowInvalid: true, \'*\': \'$inherit\' }" ng-class="{ \'focus\': $ctrl.pickerCtrl.targetDate == $ctrl.id }"  />',
+  template: '<input type="text" class="form-control" ng-keyup="$ctrl.parseValue()" placeholder="{{ $ctrl.placeholder }}" ng-click="$ctrl.pickerCtrl.openFor($ctrl.id)" ng-model-options="{ allowInvalid: true, \'*\': \'$inherit\' }" ng-class="{ \'focus\': $ctrl.pickerCtrl.targetDate == $ctrl.id }"  />',
   require: {
     ngModelCtrl: 'ngModel',
     pickerCtrl: '^rangePicker'
@@ -124,8 +124,7 @@ angular.module('rangePicker', [])
     id: '@',
     ngModel: '=',
     format: '<',
-    placeholder: '<',
-    inputClass: '<'
+    placeholder: '<'
   },
   controller: function ($scope, $element, $timeout) {
     this.targetDateWatch;
@@ -560,6 +559,14 @@ angular.module('rangePicker', [])
       this.displayEl = $element.find('.range-display');
       this.calendarEl = this.container.find('#' + this._id);
       
+      let tRect = this.container[0].getBoundingClientRect();
+      let bRect = document.body.getBoundingClientRect();
+      
+      let offsetTop = tRect.top - bRect.top;
+      let offsetRight = tRect.right - bRect.right;
+      let offsetBottom = tRect.bottom - bRect.bottom;
+      let offsetLeft = tRect.left - bRect.left;
+      
       let dRect = this.displayRect = this.displayEl[0].getBoundingClientRect();
       let cRect = this.calendarRect = this.calendarEl[0].getBoundingClientRect();
       
@@ -570,16 +577,16 @@ angular.module('rangePicker', [])
       
       switch(pos) {
         case 'top':
-          position.top = dRect.top - cRect.height;
+          position.top = dRect.top - offsetTop - cRect.height;
           break;
         case 'right':
-          position.left = dRect.right;
+          position.left = dRect.right - offsetRight;
           break;
         case 'bottom':
-          position.top = dRect.bottom;
+          position.top = dRect.bottom - offsetBottom;
           break;
         case 'left':
-          position.left = dRect.left - cRect.width - 1;
+          position.left = dRect.left - offsetLeft - cRect.width - 1;
           break;
       }
       
@@ -587,26 +594,26 @@ angular.module('rangePicker', [])
         switch(pos) {
           case 'top':
           case 'bottom':
-            position.left = dRect.left + (dRect.width - cRect.width) / 2;
+            position.left = dRect.left - offsetLeft + (dRect.width - cRect.width) / 2;
             break;
           case 'right':
           case 'left':
-            position.top = dRect.top + (dRect.height - cRect.height) / 2;
+            position.top = dRect.top - offsetTop + (dRect.height - cRect.height) / 2;
             break;
         }
       } else {
         switch(aug) {
           case 'top':
-            position.top = dRect.top - cRect.height + dRect.height;
+            position.top = dRect.top - offsetTop - cRect.height + dRect.height;
             break;
           case 'right':
-            position.left = dRect.left + dRect.width - cRect.width;
+            position.left = dRect.left - offsetLeft + dRect.width - cRect.width;
             break;
           case 'bottom':
-            position.top = dRect.top;
+            position.top = dRect.top - offsetTop;
             break;
           case 'left':
-            position.left = dRect.left;
+            position.left = dRect.left - offsetLeft;
             break;
         }
       }
