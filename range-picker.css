@@ -23,7 +23,6 @@ range-picker {
 
 .range-display .range-display-buttons {
   position: relative;
-  /*width: 180px;*/
 }
 
 .range-display .range-display-buttons .btn-primary.active {
@@ -56,7 +55,6 @@ range-picker {
 
 .range-display .range-inputs {
   position: relative;
-  /*width: 300px;*/
 }
 
 .range-display .range-inputs range-picker-input {
