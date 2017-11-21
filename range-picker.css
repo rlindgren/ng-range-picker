@@ -1,0 +1,201 @@
+.daterange-picker {
+  position: relative;
+}
+
+.range-display {
+  display: inline-block;
+}
+
+.range-display .range-display-buttons {
+  position: relative;
+  width: 180px;
+}
+
+.range-display .range-display-buttons .btn-primary.active {
+  background: blue;
+}
+
+.range-arrow:after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  content: "\2192";
+  z-index: 1000;
+  font-size: 140%;
+}
+
+.range-button {
+  width: 90px;
+}
+
+.range-display-calendar {
+  z-index: 1100;
+  position: absolute;
+  width: 302px;
+  background: #fff;
+  border: 1px solid #f5f5f5;
+  border-radius: 6px;
+  box-shadow: 0 0 1px rgba(0,0,0,.8), 0 0 8px rgba(0,0,0,.4), 0 0 16px rgba(0,0,0,.2);
+}
+
+.range-display .range-inputs {
+  position: relative;
+  width: 300px;
+}
+
+.range-display .range-inputs range-picker-input {
+  margin: -2px;
+}
+
+.range-display .range-inputs input {
+  width: calc(50% - 2px);
+  margin: 2px;
+}
+
+.range-display .range-inputs input.focus {
+  border-color: #ccc;
+  border-color: rgba(82,168,236,.8);
+  outline: 0;
+  outline: thin dotted\9;
+  -webkit-box-shadow: 0 0 8px rgba(82,168,236,.6);
+  box-shadow: 0 0 8px rgba(82,168,236,.6);
+}
+
+
+
+
+
+
+
+.range-display-calendar.inline {
+  z-index: 0;
+  position: relative;
+  box-shadow: 0 0 1px rgba(0,0,0,.8);
+}
+
+.range-display-calendar .range-calendar-header {
+  position: relative;
+  display: block;
+  height: 32px;
+}
+
+.range-display-calendar .range-calendar-header .arrow-left {
+  position: absolute;
+  left: 0;
+}
+
+.range-display-calendar .range-calendar-header .header-val {
+  padding: 4px 8px;
+  border-radius: 4px;
+  width: 100px;
+}
+
+.range-display-calendar .range-calendar-header .arrow-right {
+  position: absolute;
+  right: 0;
+}
+
+.range-display-calendar .clickable {
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.range-display-calendar .clickable:hover {
+  background-color: #f5f5f5;
+}
+
+.range-display-calendar .clickable.selected {
+  background: blue;
+  color: white;
+}
+
+.range-display-calendar .centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.range-display-calendar .current {
+  font-weight: bold;
+  font-size: 140%;
+  color: blue;
+}
+
+.range-display-calendar .invalid {
+  cursor: initial;
+  background: #f5f5f5;
+  color: #d5d5d5;
+}
+
+.range-display-calendar .invalid:hover {
+  border-radius: 0 !important;
+}
+
+.range-display-calendar .range-calendar-body.days .calendar-day {
+  display: inline-block;
+  position: relative;
+  width: calc(300px / 7);
+  height: calc(300px / 7);
+  margin-bottom: -4px;
+}
+
+.range-display-calendar .range-calendar-body.days .calendar-day:not(.selected):hover {
+  border-radius: 50%;
+}
+
+.range-display-calendar .range-calendar-body.days .dayName {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  width: calc(300px / 7);
+  height: 24px;
+  line-height: 24px;
+  background: #f5f5f5;
+}
+
+.range-display-calendar .range-calendar-body.days .calendar-day.start {
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+
+.range-display-calendar .range-calendar-body.days .calendar-day.end {
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.range-display-calendar .range-calendar-body.days .calendar-day .day {
+  position: absolute;
+}
+
+.range-display-calendar .range-calendar-body.days .calendar-day .day.off-month {
+  color: #d5d5d5;
+}
+
+.range-display-calendar .range-calendar-body.months .calendar-month,
+.range-display-calendar .range-calendar-body.years .calendar-year {
+  display: inline-block;
+  position: relative;
+  width: calc(300px / 3);
+  height: 40px;
+  margin-bottom: -4px;
+}
+
+.range-display-calendar .range-calendar-body.months .calendar-month.start,
+.range-display-calendar .range-calendar-body.years .calendar-year.start {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.range-display-calendar .range-calendar-body.months .calendar-month.end,
+.range-display-calendar .range-calendar-body.years .calendar-year.end {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.range-display-calendar .range-calendar-body.months .calendar-month:not(.selected):hover,
+.range-display-calendar .range-calendar-body.years .calendar-year:not(.selected):hover {
+  border-radius: 20px;
+}

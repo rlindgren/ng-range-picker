@@ -1,0 +1,86 @@
+<div class="daterange-picker">
+  <div class="range-display">
+    <div class="range-display-buttons" ng-hide="$picker.editable">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-default btn-sm range-button"
+                ng-click="$picker.openFor('startDate')"
+                ng-class="{ 'btn-primary active': $picker.targetDate == 'startDate' }">
+          {{ $picker.ngModel.startDate.format($picker.displayFormat) || 'Start' }}
+        </button>
+        <button type="button" class="btn btn-default btn-sm range-button"
+                ng-click="$picker.openFor('endDate')"
+                ng-class="{ 'btn-primary active': $picker.targetDate == 'endDate' }">
+          {{ $picker.ngModel.endDate.format($picker.displayFormat) || 'End' }}
+        </button>
+      </div>
+      <div class="range-arrow"></div>
+    </div>
+    <div class="range-inputs form-inline" ng-show="$picker.editable">
+      <range-picker-input id="startDate" ng-model="$picker.ngModel.startDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+      <range-picker-input id="endDate" ng-model="$picker.ngModel.endDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+      <div class="range-arrow"></div>
+    </div>
+  </div>
+  <div class="range-display-calendar {{$picker.placement}}" id="{{$picker._id}}" ng-class="{inline: $picker.inline}" ng-show="$picker.shown">
+    <div class="range-calendar-header year">
+      <div class="arrow-left" ng-click="$picker.yearPagePrev()">
+        <button type="button" class="btn btn-link btn-sm">&lt;</button>
+      </div>
+      <div class="header-val centered clickable" ng-click="$picker.switchView('years')" ng-hide="$picker.showYears">
+        {{ $picker.displayDate.format($picker.yearFormat) }}
+      </div>
+      <div class="arrow-right" ng-click="$picker.yearPageNext()">
+        <button type="button" class="btn btn-link btn-sm">&gt;</button>
+      </div>
+    </div>
+    <div class="range-calendar-header month" ng-show="$picker.showDays">
+      <div class="arrow-left" ng-click="$picker.prev('month')">
+        <button type="button" class="btn btn-link btn-sm">&lt;</button>
+      </div>
+      <div class="header-val centered clickable" ng-click="$picker.switchView('months')">
+        {{ $picker.displayDate.format($picker.monthFormat) }}
+      </div>
+      <div class="arrow-right" ng-click="$picker.next('month')">
+        <button type="button" class="btn btn-link btn-sm">&gt;</button>
+      </div>
+    </div>
+    <div class="range-calendar-body days" ng-show="$picker.showDays">
+      <div class="dayName" ng-repeat="dayLabel in $picker.dayLabels track by dayLabel">
+        {{ dayLabel }}
+      </div>
+      <div class="calendar-day clickable"
+           ng-repeat="day in $picker.days track by $index"
+           ng-click="$picker.selectDay(day)"
+           ng-class="{ 'start': day.isStart, 'end': day.isEnd, 'selected': day.inRange || day.isStart || day.isEnd, 'current': day.isCurrent, invalid: !day.isValid }">
+        <div class="day centered" ng-class="{'off-month': day.value <= 0 || day.value > $picker.daysInMonth}">
+          {{ day.label }}
+        </div>
+      </div>
+    </div>
+    <div class="range-calendar-body months" ng-show="$picker.showMonths">
+      <div class="calendar-month clickable"
+           ng-repeat="month in $picker.months track by $index"
+           ng-click="$picker.selectMonth(month)"
+           ng-class="{ 'start': month.isStart, 'end': month.isEnd, 'selected': month.inRange || month.isStart || month.isEnd, current: month.isCurrent, invalid: !month.isValid }">
+        <div class="month centered">
+          {{ month.label }}
+        </div>
+      </div>
+    </div>
+    <div class="range-calendar-body years" ng-show="$picker.showYears">
+      <div class="calendar-year clickable"
+           ng-repeat="year in $picker.years track by $index"
+           ng-click="$picker.selectYear(year)"
+           ng-class="{ 'start': year.isStart, 'end': year.isEnd, 'selected': year.inRange || year.isStart || year.isEnd, current: year.isCurrent, invalid: !year.isValid }">
+        <div class="year centered">
+          {{ year.label }}
+        </div>
+      </div>
+    </div>
+    <button type="button" style="display: inline-block; margin:2px; width: calc(100% - 4px)" class="btn btn-success btn-block"
+            ng-show="$picker.changedFromLast() && $picker.isValid()"
+            ng-click="$picker.runChanged(true)">
+      OK
+    </button>
+  </div>
+</div>

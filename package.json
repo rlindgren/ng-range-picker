@@ -1,0 +1,29 @@
+{
+  "name": "ng-range-picker",
+  "version": "0.0.1",
+  "description": "AngularJS date range picker",
+  "main": "range-picker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlindgren/ng-range-picker.git"
+  },
+  "keywords": [
+    "angularjs",
+    "daterange",
+    "date",
+    "range",
+    "picker"
+  ],
+  "author": "Ryan Lindgren",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rlindgren/ng-range-picker/issues"
+  },
+  "homepage": "https://github.com/rlindgren/ng-range-picker#readme",
+  "devDependencies": {
+    "moment-parseplus": "^1.0.3"
+  }
+}
