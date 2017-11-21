@@ -104,7 +104,7 @@ angular.module('rangePicker', [])
   yearFormat: 'YYYY',
   monthFormat: 'MMMM',
   dayFormat: 'D',
-  displayFormat: 'MM-DD-YYYY',
+  displayFormat: 'M/D/YY',
   monthListFormat: 'MMM',
   container: null,
   offsetTop: 0,
