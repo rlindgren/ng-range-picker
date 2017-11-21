@@ -91,8 +91,9 @@ angular.module('rangePicker', [])
 }])
 .value('rangePickerConfig', {
   _currentId: 0,
-  editable: true,
+  editable: false,
   placement: 'bottom-left',
+  bindAs: 'moment',
   dayLabels: moment.localeData()._weekdaysMin,
   yearFormat: 'YYYY',
   monthFormat: 'MMMM',
@@ -126,7 +127,16 @@ angular.module('rangePicker', [])
     
     this.$onInit = () => {
       this.ngModelCtrl.$render = () => {
-        this.ngModel = moment(this.ngModelCtrl.$modelValue);
+        switch(this.pickerCtrl.bindAs) {
+          case 'string':
+            this.ngModel = moment(this.ngModelCtrl.$modelValue).toISOString();
+            break;
+          case 'date':
+            this.ngModel = moment(this.ngModelCtrl.$modelValue).toDate();
+            break;
+          default:
+            this.ngModel = moment(this.ngModelCtrl.$modelValue);
+        }
       };
       
       this.ngModelCtrl.$parsers.unshift((_value) => {
@@ -171,6 +181,7 @@ angular.module('rangePicker', [])
     ngModel: '=',
     editable: '<',
     placement: '@',
+    bindAs: '@',
     inline: '<',
     minDate: '<',
     maxDate: '<',
@@ -197,6 +208,7 @@ angular.module('rangePicker', [])
     this.setLastModel();
     this.editable = typeof this.editable == 'undefined' ? rangePickerConfig.editable : this.editable,
     this.placement = this.placement || rangePickerConfig.placement;
+    this.bindAs = this.bindAs || rangePickerConfig.bindAs;
     this.dayLabels = this.dayLabels || rangePickerConfig.dayLabels;
     this.yearFormat = this.yearFormat || rangePickerConfig.yearFormat;
     this.monthFormat = this.monthFormat || rangePickerConfig.monthFormat;
@@ -272,7 +284,7 @@ angular.module('rangePicker', [])
     
     this.openFor = (date) => {
       this.targetDate = date;
-      this.displayDate = this.ngModel[this.targetDate] || moment();
+      this.displayDate = this.ngModel[this.targetDate] ? moment(this.ngModel[this.targetDate]) : moment();
       this.switchView('days');
       this.showDays = true;
       this.show();
@@ -414,10 +426,10 @@ angular.module('rangePicker', [])
     };
     
     this.isValidDate = (date) => {
-      if (this.minDate && this.minDate.isAfter(date)) {
+      if (this.minDate && moment(this.minDate).isAfter(date)) {
         return false;
       }
-      if (this.maxDate && this.maxDate.isBefore(date)) {
+      if (this.maxDate && moment(this.maxDate).isBefore(date)) {
         return false;
       }
       return true;
@@ -498,8 +510,6 @@ angular.module('rangePicker', [])
       let aug = split[1];
       let position = {};
       
-      console.log(dRect)
-      
       switch(pos) {
         case 'top':
           position.top = dRect.top - cRect.height;
@@ -567,8 +577,6 @@ angular.module('rangePicker', [])
       let pos = split[0];
       let aug = split[1];
       let position = {};
-      
-      console.log(dRect)
       
       switch(pos) {
         case 'top':
