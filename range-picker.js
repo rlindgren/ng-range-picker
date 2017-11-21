@@ -19,7 +19,7 @@ angular.module('rangePicker', [])
           <div class="range-arrow"></div>
         </div>
         <div class="range-input" ng-show="$picker.editable">
-          <input class="form-control {{ $picker.inputClass }}" type="text" ng-keyup="$picker.inputChanged($event)" ng-click="$picker.openFor('startDate')" value="{{ $picker.inputValue() }}" placeholder="{{ $picker.startPlaceholder + $picker.separator + $picker.endPlaceholder }}" />
+          <input class="form-control {{ $picker.inputClass }}" type="text" ng-keyup="$picker.inputChanged($event)" ng-click="$event.stopPropagation(); $picker.openFor('startDate')" value="{{ $picker.inputValue() }}" placeholder="{{ $picker.startPlaceholder + $picker.separator + $picker.endPlaceholder }}" />
         </div>
       </div>
       <div class="range-display-calendar {{$picker.placement}}" id="{{$picker._id}}" ng-class="{inline: $picker.inline}" ng-show="$picker.shown">
