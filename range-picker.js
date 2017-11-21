@@ -109,7 +109,7 @@ angular.module('rangePicker', [])
   inputClass: ''
 })
 .component('rangePickerInput', {
-  template: '<input type="text" class="form-control {{ this.inputClass }}" ng-keyup="$ctrl.parseValue()" placeholder="{{ $ctrl.placeholder }}" ng-click="$ctrl.pickerCtrl.openFor($ctrl.id)" ng-model-options="{ allowInvalid: true, \'*\': \'$inherit\' }" ng-class="{ \'focus\': $ctrl.pickerCtrl.targetDate == $ctrl.id }"  />',
+  template: '<input type="text" class="form-control {{ $ctrl.inputClass }}" ng-keyup="$ctrl.parseValue()" placeholder="{{ $ctrl.placeholder }}" ng-click="$ctrl.pickerCtrl.openFor($ctrl.id)" ng-model-options="{ allowInvalid: true, \'*\': \'$inherit\' }" ng-class="{ \'focus\': $ctrl.pickerCtrl.targetDate == $ctrl.id }"  />',
   require: {
     ngModelCtrl: 'ngModel',
     pickerCtrl: '^rangePicker'
