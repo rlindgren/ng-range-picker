@@ -607,10 +607,10 @@ angular.module('rangePicker', [])
             position.top = dRect.top - offsetTop - cRect.height + dRect.height;
             break;
           case 'right':
-            position.left = dRect.left - offsetLeft + dRect.width - cRect.width;
+            position.left = dRect.left + offsetLeft + dRect.width - cRect.width;
             break;
           case 'bottom':
-            position.top = dRect.top - offsetTop;
+            position.top = dRect.top + offsetTop;
             break;
           case 'left':
             position.left = dRect.left - offsetLeft;
