@@ -580,10 +580,10 @@ angular.module('rangePicker', [])
           position.top = dRect.top - offsetTop - cRect.height;
           break;
         case 'right':
-          position.left = dRect.right - offsetRight;
+          position.left = dRect.right - offsetLeft;
           break;
         case 'bottom':
-          position.top = dRect.bottom - offsetBottom;
+          position.top = dRect.bottom - offsetTop;
           break;
         case 'left':
           position.left = dRect.left - offsetLeft - cRect.width - 1;
@@ -607,7 +607,7 @@ angular.module('rangePicker', [])
             position.top = dRect.top - offsetTop - cRect.height + dRect.height;
             break;
           case 'right':
-            position.left = dRect.left + offsetLeft + dRect.width - cRect.width;
+            position.left = dRect.left - offsetLeft + dRect.width - cRect.width;
             break;
           case 'bottom':
             position.top = dRect.top + offsetTop;
