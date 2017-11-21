@@ -8,23 +8,26 @@ angular.module('rangePicker', [])
             <button type="button" class="btn range-button {{ $picker.buttonClass }}"
                     ng-click="$picker.openFor('startDate')"
                     ng-class="{ 'btn-primary active': $picker.targetDate == 'startDate' }">
-              {{ $picker.ngModel.startDate.format($picker.displayFormat) || 'Start' }}
+              {{ $picker.ngModel.startDate.format($picker.displayFormat) || $picker.startPlaceholder }}
             </button>
             <button type="button" class="btn range-button {{ $picker.buttonClass }}"
                     ng-click="$picker.openFor('endDate')"
                     ng-class="{ 'btn-primary active': $picker.targetDate == 'endDate' }">
-              {{ $picker.ngModel.endDate.format($picker.displayFormat) || 'End' }}
+              {{ $picker.ngModel.endDate.format($picker.displayFormat) || $picker.endPlaceholder }}
             </button>
           </div>
           <div class="range-arrow"></div>
         </div>
-        <div class="range-inputs form-inline" ng-show="$picker.editable">
-          <range-picker-input id="startDate" input-class="$picker.inputClass" ng-model="$picker.ngModel.startDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
-          <range-picker-input id="endDate" input-class="$picker.inputClass" ng-model="$picker.ngModel.endDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
-          <div class="range-arrow"></div>
+        <div class="range-input" ng-show="$picker.editable">
+          <input class="form-control {{ $picker.inputClass }}" type="text" ng-click="$picker.openFor('startDate')" value="{{ $picker.inputValue() }}" />
         </div>
       </div>
       <div class="range-display-calendar {{$picker.placement}}" id="{{$picker._id}}" ng-class="{inline: $picker.inline}" ng-show="$picker.shown">
+        <div class="range-inputs form-inline">
+          <range-picker-input id="startDate" ng-model="$picker.ngModel.startDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+          <range-picker-input id="endDate" ng-model="$picker.ngModel.endDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+          <div class="range-arrow"></div>
+        </div>
         <div class="range-calendar-header year">
           <div class="arrow-left" ng-click="$picker.yearPagePrev()">
             <button type="button" class="btn btn-link btn-sm">&lt;</button>
@@ -95,6 +98,9 @@ angular.module('rangePicker', [])
   placement: 'bottom-left',
   bindAs: 'moment',
   dayLabels: moment.localeData()._weekdaysMin,
+  separator: ' - ',
+  startPlaceholder: 'Start',
+  endPlaceholder: 'End',
   yearFormat: 'YYYY',
   monthFormat: 'MMMM',
   dayFormat: 'D',
@@ -184,6 +190,9 @@ angular.module('rangePicker', [])
     ngModel: '=',
     editable: '<',
     placement: '@',
+    separator: '@',
+    startPlaceholder: '@',
+    endPlaceholder: '@',
     bindAs: '@',
     inline: '<',
     minDate: '<',
@@ -213,6 +222,9 @@ angular.module('rangePicker', [])
     this.setLastModel();
     this.editable = typeof this.editable == 'undefined' ? rangePickerConfig.editable : this.editable,
     this.placement = this.placement || rangePickerConfig.placement;
+    this.separator = this.separator || rangePickerConfig.separator;
+    this.startPlaceholder = this.startPlaceholder || rangePickerConfig.startPlaceholder;
+    this.endPlaceholder = this.endPlaceholder || rangePickerConfig.endPlaceholder;
     this.bindAs = this.bindAs || rangePickerConfig.bindAs;
     this.dayLabels = this.dayLabels || rangePickerConfig.dayLabels;
     this.yearFormat = this.yearFormat || rangePickerConfig.yearFormat;
@@ -267,6 +279,25 @@ angular.module('rangePicker', [])
     // on component destroyed
     this.$onDestroy = () => {
       $(document).off('click.' + this._id, this.clickWatcher);
+    };
+    
+    this.inputValue = () => {
+      let ret = '';
+      if (this.ngModel.startDate) {
+        ret += moment(this.ngModel.startDate).format(this.displayFormat);
+      } else {
+        ret += this.startPlaceholder;
+      }
+      
+      ret += this.separator;
+      
+      if (this.ngModel.endDate) {
+        ret += moment(this.ngModel.endDate).format(this.displayFormat);
+      } else {
+        ret += this.endPlaceholder;
+      }
+      
+      return ret;
     };
     
     this.show = () => {
