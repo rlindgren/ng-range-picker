@@ -5,12 +5,12 @@ angular.module('rangePicker', [])
       <div class="range-display">
         <div class="range-display-buttons" ng-hide="$picker.editable">
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default btn-sm range-button"
+            <button type="button" class="btn range-button {{ $picker.buttonClass }}"
                     ng-click="$picker.openFor('startDate')"
                     ng-class="{ 'btn-primary active': $picker.targetDate == 'startDate' }">
               {{ $picker.ngModel.startDate.format($picker.displayFormat) || 'Start' }}
             </button>
-            <button type="button" class="btn btn-default btn-sm range-button"
+            <button type="button" class="btn range-button {{ $picker.buttonClass }}"
                     ng-click="$picker.openFor('endDate')"
                     ng-class="{ 'btn-primary active': $picker.targetDate == 'endDate' }">
               {{ $picker.ngModel.endDate.format($picker.displayFormat) || 'End' }}
@@ -19,8 +19,8 @@ angular.module('rangePicker', [])
           <div class="range-arrow"></div>
         </div>
         <div class="range-inputs form-inline" ng-show="$picker.editable">
-          <range-picker-input id="startDate" ng-model="$picker.ngModel.startDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
-          <range-picker-input id="endDate" ng-model="$picker.ngModel.endDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+          <range-picker-input id="startDate" input-class="$picker.inputClass" ng-model="$picker.ngModel.startDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+          <range-picker-input id="endDate" input-class="$picker.inputClass" ng-model="$picker.ngModel.endDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
           <div class="range-arrow"></div>
         </div>
       </div>
@@ -104,10 +104,12 @@ angular.module('rangePicker', [])
   offsetTop: 0,
   offsetRight: 0,
   offsetBottom: 0,
-  offsetLeft: 0
+  offsetLeft: 0,
+  buttonClass: 'btn-default btn-sm',
+  inputClass: ''
 })
 .component('rangePickerInput', {
-  template: '<input type="text" class="form-control" ng-keyup="$ctrl.parseValue()" placeholder="{{ $ctrl.placeholder }}" ng-click="$ctrl.pickerCtrl.openFor($ctrl.id)" ng-model-options="{ allowInvalid: true, \'*\': \'$inherit\' }" ng-class="{ \'focus\': $ctrl.pickerCtrl.targetDate == $ctrl.id }"  />',
+  template: '<input type="text" class="form-control {{ this.inputClass }}" ng-keyup="$ctrl.parseValue()" placeholder="{{ $ctrl.placeholder }}" ng-click="$ctrl.pickerCtrl.openFor($ctrl.id)" ng-model-options="{ allowInvalid: true, \'*\': \'$inherit\' }" ng-class="{ \'focus\': $ctrl.pickerCtrl.targetDate == $ctrl.id }"  />',
   require: {
     ngModelCtrl: 'ngModel',
     pickerCtrl: '^rangePicker'
@@ -116,7 +118,8 @@ angular.module('rangePicker', [])
     id: '@',
     ngModel: '=',
     format: '<',
-    placeholder: '<'
+    placeholder: '<',
+    inputClass: '<'
   },
   controller: function ($scope, $element, $timeout) {
     this.targetDateWatch;
@@ -196,7 +199,9 @@ angular.module('rangePicker', [])
     offsetTop: '<',
     offsetRight: '<',
     offsetBottom: '<',
-    offsetLeft: '<'
+    offsetLeft: '<',
+    buttonClass: '@',
+    inputClass: '@'
   },
   controllerAs: '$picker',
   controller: function ($scope, $element, $timeout, rangePickerConfig) {
@@ -219,6 +224,8 @@ angular.module('rangePicker', [])
     this.offsetRight = this.offsetRight || rangePickerConfig.offsetRight;
     this.offsetBottom = this.offsetBottom || rangePickerConfig.offsetBottom;
     this.offsetLeft = this.offsetLeft || rangePickerConfig.offsetLeft;
+    this.buttonClass = this.buttonClass || rangePickerConfig.buttonClass;
+    this.inputClass = this.inputClass || rangePickerConfig.inputClass;
     
     this.minDate = this.minDate ? moment(this.minDate).startOf('day').hours(12) : null;
     this.maxDate = this.maxDate ? moment(this.maxDate).startOf('day').hours(12) : null;
