@@ -528,17 +528,18 @@ module.exports = {
     };
 
     this.getDays = function (date) {
+      date = moment(date).hours(12).startOf('day').hours(12);
       _this.daysInMonth = moment(date).daysInMonth();
       var today = moment();
       var days = [];
       var startDay = moment(date).startOf('month').day();
       var displayedDays = _this.daysInMonth + startDay;
       displayedDays += 7 - (displayedDays % 7 || 7);
-      var start = moment(_this.ngModel.startDate).startOf('day').hours(12);
-      var end = moment(_this.ngModel.endDate).startOf('day').hours(12);
+      var start = moment(_this.ngModel.startDate).hours(12).startOf('day').hours(12);
+      var end = moment(_this.ngModel.endDate).hours(12).startOf('day').hours(12);
 
       for (var i = 0; i < displayedDays; i++) {
-        var mo = moment(date).startOf('day').hours(12).date(i - startDay + 1);
+        var mo = moment(date).date(i - startDay + 1);
         days.push({
           value: i < startDay ? -(startDay - i) + 1 : i - startDay + 1,
           label: mo.format(_this.dayFormat),
