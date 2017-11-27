@@ -75,7 +75,7 @@ angular.module('rangePicker', []).value('rangePickerConfig', __webpack_require__
 
 module.exports = {
   _currentId: 0,
-  editable: false,
+  editable: true,
   placement: 'bottom-left',
   bindAs: 'moment',
   dayLabels: moment.localeData()._weekdaysMin,
@@ -534,17 +534,19 @@ module.exports = {
       var startDay = moment(date).startOf('month').day();
       var displayedDays = _this.daysInMonth + startDay;
       displayedDays += 7 - (displayedDays % 7 || 7);
+      var start = moment(_this.ngModel.startDate).startOf('day').hours(12);
+      var end = moment(_this.ngModel.endDate).startOf('day').hours(12);
 
       for (var i = 0; i < displayedDays; i++) {
-        var mo = moment(date).date(i - startDay + 1);
+        var mo = moment(date).startOf('day').hours(12).date(i - startDay + 1);
         days.push({
           value: i < startDay ? -(startDay - i) + 1 : i - startDay + 1,
           label: mo.format(_this.dayFormat),
           isCurrent: mo.isSame(today, 'date'),
-          isValid: _this.isValidDate(moment(mo).startOf('day').hours(12)),
-          isStart: mo.isSame(_this.ngModel.startDate, 'date'),
-          isEnd: mo.isSame(_this.ngModel.endDate, 'date'),
-          inRange: mo.isBefore(_this.ngModel.endDate) && mo.isAfter(_this.ngModel.startDate)
+          isValid: _this.isValidDate(mo),
+          isStart: mo.isSame(start, 'date'),
+          isEnd: mo.isSame(end, 'date'),
+          inRange: mo.isBefore(end) && mo.isAfter(start)
         });
       }
 
