@@ -21,5 +21,6 @@
 <script src="moment-parseplus.js"></script>
 <!-- end optional -->
 
-<script src="range-picker.bundle.js"></script>
+<link rel="stylesheet" href="node_modules/ng-range-picker/dist/ng-range-picker.min.css" />
+<script src="node_modules/ng-range-picker/dist/ng-range-picker.min.js"></script>
 ```
