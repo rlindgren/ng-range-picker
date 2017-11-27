@@ -543,10 +543,10 @@ module.exports = {
         days.push({
           value: i < startDay ? -(startDay - i) + 1 : i - startDay + 1,
           label: mo.format(_this.dayFormat),
-          isCurrent: mo.isSame(today, 'date'),
+          isCurrent: mo.isSame(today, 'day'),
           isValid: _this.isValidDate(mo),
-          isStart: mo.isSame(start, 'date'),
-          isEnd: mo.isSame(end, 'date'),
+          isStart: mo.isSame(start, 'day'),
+          isEnd: mo.isSame(end, 'day'),
           inRange: mo.isBefore(end) && mo.isAfter(start)
         });
       }
