@@ -10,6 +10,11 @@
 
 #### Installation
 ```
+npm install -S ng-range-picker
+```
+
+Required dependencies
+```
 <!-- start required deps -->
 <!-- bootstrap.css v3.2.0 -->
 <link rel="stylesheet" href="bootstrap.min.css" />
