@@ -2,7 +2,7 @@
   "name": "ng-range-picker",
   "version": "0.0.1",
   "description": "AngularJS date range picker",
-  "main": "./dist/range-picker.js",
+  "main": "./dist/ng-range-picker.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack && npm run copy:css && npm run minify:css",
