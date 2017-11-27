@@ -1,0 +1,97 @@
+<div class="nrp-picker">
+  <div class="nrp-range-display">
+    <div class="nrp-range-display-buttons" ng-hide="$picker.editable">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn nrp-range-button {{ $picker.buttonClass }}"
+                ng-click="$picker.openFor('startDate')"
+                ng-class="{ 'btn-primary active': $picker.targetDate == 'startDate' }">
+          {{ $picker.ngModel.startDate.format($picker.displayFormat) || $picker.startPlaceholder }}
+        </button>
+        <button type="button" class="btn nrp-range-button {{ $picker.buttonClass }}"
+                ng-click="$picker.openFor('endDate')"
+                ng-class="{ 'btn-primary active': $picker.targetDate == 'endDate' }">
+          {{ $picker.ngModel.endDate.format($picker.displayFormat) || $picker.endPlaceholder }}
+        </button>
+      </div>
+      <div class="nrp-range-arrow"></div>
+    </div>
+    <div class="nrp-range-input" ng-show="$picker.editable">
+      <input class="form-control {{ $picker.inputClass }}" type="text" ng-keyup="$picker.inputChanged($event)" ng-click="$event.stopPropagation(); $picker.openFor('startDate')" value="{{ $picker.inputValue() }}" placeholder="{{ $picker.startPlaceholder + $picker.separator + $picker.endPlaceholder }}" />
+    </div>
+  </div>
+  <div class="nrp-range-display-calendar" id="{{$picker._id}}" ng-class="{inline: $picker.inline}" ng-show="$picker.shown">
+    <div class="nrp-range-display-calendar-ranges" ng-show="$picker.ranges && $picker.ranges.length">
+      <div class="nrp-calendar-range nrp-clickable" ng-repeat="range in $picker.ranges" ng-click="$picker.setRange(range)">
+        <div class="nrp-range nrp-centered">{{ range.label }}</div>
+      </div>
+    </div>
+    <div class="nrp-range-display-calendar-calendar">
+      <div class="nrp-range-inputs form-inline">
+        <range-picker-input id="startDate" ng-model="$picker.ngModel.startDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+        <range-picker-input id="endDate" ng-model="$picker.ngModel.endDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
+        <div class="nrp-range-arrow"></div>
+      </div>
+      <div class="nrp-range-calendar-header nrp-year">
+        <div class="nrp-arrow-left" ng-click="$picker.yearPagePrev()">
+          <button type="button" class="btn btn-link btn-sm">&lt;</button>
+        </div>
+        <div class="nrp-header-val nrp-centered nrp-clickable" ng-click="$picker.switchView('years')" ng-hide="$picker.showYears">
+          {{ $picker.displayDate.format($picker.yearFormat) }}
+        </div>
+        <div class="nrp-arrow-right" ng-click="$picker.yearPageNext()">
+          <button type="button" class="btn btn-link btn-sm">&gt;</button>
+        </div>
+      </div>
+      <div class="nrp-range-calendar-header nrp-month" ng-show="$picker.showDays">
+        <div class="nrp-arrow-left" ng-click="$picker.prev('month')">
+          <button type="button" class="btn btn-link btn-sm">&lt;</button>
+        </div>
+        <div class="nrp-header-val nrp-centered nrp-clickable" ng-click="$picker.switchView('months')">
+          {{ $picker.displayDate.format($picker.monthFormat) }}
+        </div>
+        <div class="nrp-arrow-right" ng-click="$picker.next('month')">
+          <button type="button" class="btn btn-link btn-sm">&gt;</button>
+        </div>
+      </div>
+      <div class="nrp-range-calendar-body nrp-days" ng-show="$picker.showDays">
+        <div class="nrp-day-name" ng-repeat="dayLabel in $picker.dayLabels track by dayLabel">
+          {{ dayLabel }}
+        </div>
+        <div class="nrp-calendar-day nrp-clickable"
+             ng-repeat="day in $picker.days track by $index"
+             ng-click="$picker.selectDay(day)"
+             ng-class="{ 'nrp-start': day.isStart, 'nrp-end': day.isEnd, 'nrp-selected': day.inRange || day.isStart || day.isEnd, 'nrp-current': day.isCurrent, 'nrp-invalid': !day.isValid }">
+          <div class="nrp-day nrp-centered" ng-class="{'nrp-off-month': day.value <= 0 || day.value > $picker.daysInMonth}">
+            {{ day.label }}
+          </div>
+        </div>
+      </div>
+      <div class="nrp-range-calendar-body nrp-months" ng-show="$picker.showMonths">
+        <div class="nrp-calendar-month nrp-clickable"
+             ng-repeat="month in $picker.months track by $index"
+             ng-click="$picker.selectMonth(month)"
+             ng-class="{ 'nrp-start': month.isStart, 'nrp-end': month.isEnd, 'nrp-selected': month.inRange || month.isStart || month.isEnd, 'nrp-current': month.isCurrent, 'nrp-invalid': !month.isValid }">
+          <div class="month centered">
+            {{ month.label }}
+          </div>
+        </div>
+      </div>
+      <div class="nrp-range-calendar-body nrp-years" ng-show="$picker.showYears">
+        <div class="nrp-calendar-year nrp-clickable"
+             ng-repeat="year in $picker.years track by $index"
+             ng-click="$picker.selectYear(year)"
+             ng-class="{ 'nrp-start': year.isStart, 'nrp-end': year.isEnd, 'nrp-selected': year.inRange || year.isStart || year.isEnd, 'nrp-current': year.isCurrent, 'nrp-invalid': !year.isValid }">
+          <div class="nrp-year nrp-centered">
+            {{ year.label }}
+          </div>
+        </div>
+      </div>
+      <button type="button" style="display: inline-block; margin:2px; width: calc(100% - 4px)" class="btn btn-success btn-block"
+              ng-show="$picker.showDays && $picker.changedFromLast() && $picker.isValid()"
+              ng-click="$picker.runChanged(true)">
+        OK
+
+      </button>
+    </div>
+  </div>
+</div>

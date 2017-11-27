@@ -2,9 +2,13 @@
   "name": "ng-range-picker",
   "version": "0.0.1",
   "description": "AngularJS date range picker",
-  "main": "range-picker.js",
+  "main": "./dist/range-picker.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack && npm run copy:css && npm run minify:css",
+    "copy:css": "cp lib/range-picker.component.css dist/ng-range-picker.css",
+    "minify:css": "postcss dist/ng-range-picker.css > dist/ng-range-picker.min.css",
+    "start": "npm run build && webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -24,6 +28,16 @@
   },
   "homepage": "https://github.com/rlindgren/ng-range-picker#readme",
   "devDependencies": {
-    "moment-parseplus": "^1.0.3"
+    "@babel/core": "^7.0.0-beta.32",
+    "@babel/preset-env": "^7.0.0-beta.32",
+    "babel-loader": "^8.0.0-beta.0",
+    "babel-minify-webpack-plugin": "^0.2.0",
+    "cssnano": "^3.10.0",
+    "html-loader": "^0.5.1",
+    "moment-parseplus": "^1.0.3",
+    "postcss-cli": "^4.1.1",
+    "tether": "^1.4.2",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.4"
   }
 }
