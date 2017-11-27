@@ -1,6 +1,6 @@
 {
   "name": "ng-range-picker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "AngularJS date range picker",
   "main": "./dist/ng-range-picker.js",
   "scripts": {
