@@ -1,4 +1,4 @@
-## AngularJS Date Range Picker
+# AngularJS Date Range Picker
 
 #### Dependencies
 - bootstrap.css
