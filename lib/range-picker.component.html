@@ -26,11 +26,11 @@
       </div>
     </div>
     <div class="nrp-range-display-calendar-calendar">
-      <div class="nrp-range-inputs form-inline">
+      <div class="nrp-range-inputs form-inline" ng-show="$picker.showDays">
         <range-picker-input id="startDate" ng-model="$picker.ngModel.startDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
         <range-picker-input id="endDate" ng-model="$picker.ngModel.endDate" format="$picker.displayFormat" placeholder="$picker.displayFormat"></range-picker-input>
       </div>
-      <div class="nrp-range-calendar-header nrp-year">
+      <div class="nrp-range-calendar-header nrp-year" ng-hide="$picker.showDays">
         <div class="nrp-arrow-left" ng-click="$picker.yearPagePrev()">
           <button type="button" class="btn btn-link btn-sm">&lt;</button>
         </div>
@@ -46,7 +46,7 @@
           <button type="button" class="btn btn-link btn-sm">&lt;</button>
         </div>
         <div class="nrp-header-val nrp-centered nrp-clickable" ng-click="$picker.switchView('months')">
-          {{ $picker.displayDate.format($picker.monthFormat) }}
+          {{ $picker.displayDate.format($picker.monthFormat) }} {{ $picker.displayDate.format($picker.yearFormat) }}
         </div>
         <div class="nrp-arrow-right" ng-click="$picker.next('month')">
           <button type="button" class="btn btn-link btn-sm">&gt;</button>
@@ -70,7 +70,7 @@
              ng-repeat="month in $picker.months track by $index"
              ng-click="$picker.selectMonth(month)"
              ng-class="{ 'nrp-start': month.isStart, 'nrp-end': month.isEnd, 'nrp-selected': month.inRange || month.isStart || month.isEnd, 'nrp-current': month.isCurrent, 'nrp-invalid': !month.isValid }">
-          <div class="month centered">
+          <div class="nrp-month nrp-centered">
             {{ month.label }}
           </div>
         </div>
