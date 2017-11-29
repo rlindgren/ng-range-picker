@@ -67,7 +67,7 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-angular.module('rangePicker', []).value('rangePickerConfig', __webpack_require__(1)).component('rangePickerInput', __webpack_require__(2)).component('rangePicker', __webpack_require__(3));
+angular.module('rangePicker', []).value('rangePickerConfig', __webpack_require__(1)).factory('rangePickerDelegate', __webpack_require__(2)).component('rangePickerInput', __webpack_require__(3)).component('rangePicker', __webpack_require__(4));
 
 /***/ }),
 /* 1 */
@@ -93,11 +93,74 @@ module.exports = {
   offsetBottom: 0,
   offsetLeft: 0,
   buttonClass: 'btn-default btn-sm',
-  inputClass: ''
+  inputClass: '',
+  preserveOnStateChange: false,
+  preserveOnRouteChange: false,
+  preserveOnLocationChange: false
 };
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = function () {
+  function pickerDelegate() {
+    var _this = this;
+
+    this.pickers = [];
+
+    this.hideAll = function () {
+      _this.pickers.forEach(function (picker) {
+        return picker.hide();
+      });
+    };
+
+    this.hideAllExcept = function (name) {
+      _this.pickers.filter(function (p) {
+        return p.name === name || p === name ? false : true;
+      }).forEach(function (picker) {
+        return picker.hide();
+      });
+    };
+
+    this.hide = function (name) {
+      _this.pickers.filter(function (p) {
+        return p.name === name || p === name;
+      }).forEach(function (p) {
+        return p.hide();
+      });
+    };
+
+    this.show = function (name) {
+      _this.pickers.filter(function (p) {
+        return p.name === name || p === name;
+      }).forEach(function (p) {
+        return p.show();
+      });
+    };
+
+    this.add = function (picker) {
+      if (_this.pickers.indexOf(picker) < 0) {
+        _this.pickers.push(picker);
+      }
+    };
+
+    this.remove = function (picker) {
+      var index = _this.pickers.indexOf(picker);
+
+      if (index >= 0) {
+        _this.pickers.splice(index, 1);
+      }
+    };
+
+    return this;
+  }
+
+  return new pickerDelegate();
+};
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -179,7 +242,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 function _sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
@@ -187,7 +250,7 @@ function _sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; 
 function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return _sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }
 
 module.exports = {
-  template: __webpack_require__(4),
+  template: __webpack_require__(5),
   bindings: {
     name: '@',
     ngModel: '=',
@@ -213,12 +276,16 @@ module.exports = {
     offsetBottom: '<',
     offsetLeft: '<',
     buttonClass: '@',
-    inputClass: '@'
+    inputClass: '@',
+    preserveOnStateChange: '<',
+    preserveOnRouteChange: '<',
+    preserveOnLocationChange: '<'
   },
   controllerAs: '$picker',
-  controller: ['$scope', '$element', '$timeout', 'rangePickerConfig', function ($scope, $element, $timeout, rangePickerConfig) {
+  controller: ['$scope', '$element', '$timeout', 'rangePickerConfig', 'rangePickerDelegate', function ($scope, $element, $timeout, rangePickerConfig, rangePickerDelegate) {
     var _this = this;
 
+    rangePickerDelegate.add(this);
     this._id = 'range_picker_' + ++rangePickerConfig._currentId;
     this._tether = null;
     this.calendarEl;
@@ -249,11 +316,17 @@ module.exports = {
     this.offsetLeft = this.offsetLeft || rangePickerConfig.offsetLeft;
     this.buttonClass = this.buttonClass || rangePickerConfig.buttonClass;
     this.inputClass = this.inputClass || rangePickerConfig.inputClass;
+    this.preserveOnStateChange = typeof this.preserveOnStateChange == 'undefined' ? rangePickerConfig.preserveOnStateChange : this.preserveOnStateChange;
+    this.preserveOnRouteChange = typeof this.preserveOnRouteChange == 'undefined' ? rangePickerConfig.preserveOnRouteChange : this.preserveOnRouteChange;
+    this.preserveOnLocationChange = typeof this.preserveOnLocationChange == 'undefined' ? rangePickerConfig.preserveOnLocationChange : this.preserveOnLocationChange;
     this.minDate = this.minDate ? moment(this.minDate).startOf('day').hours(12) : null;
     this.maxDate = this.maxDate ? moment(this.maxDate).startOf('day').hours(12) : null;
     this.showDays = true;
     this.showMonths = false;
-    this.showYears = false; // on component initialized
+    this.showYears = false;
+
+    this.noop = function () {}; // on component initialized
+
 
     this.$onInit = function () {
       if (_this.inline) {
@@ -278,9 +351,21 @@ module.exports = {
           _this.getDays(moment(n));
         }
       });
+      var routeChangeWatch = _this.preserveOnRouteChange ? _this.noop : $scope.$on('$routeChangeStart', function () {
+        rangePickerDelegate.hideAll();
+      });
+      var stateChangeWatch = _this.preserveOnStateChange ? _this.noop : $scope.$on('$stateChangeStart', function () {
+        rangePickerDelegate.hideAll();
+      });
+      var locationChangeWatch = _this.preserveOnLocationChange ? _this.noop : $scope.$on('$locationChangeStart', function () {
+        rangePickerDelegate.hideAll();
+      });
       $scope.$on('$destroy', function () {
         startWatch();
         endWatch();
+        routeChangeWatch();
+        stateChangeWatch();
+        locationChangeWatch();
       });
     }; // on component destroyed
 
@@ -354,6 +439,7 @@ module.exports = {
     };
 
     this.openFor = function (date) {
+      rangePickerDelegate.hideAllExcept(_this);
       _this.targetDate = date;
       _this.displayDate = _this.ngModel[_this.targetDate] ? moment(_this.ngModel[_this.targetDate]) : moment();
 
@@ -641,9 +727,9 @@ module.exports = {
 
       if (_this.shown && !_this.clickedInside(e.target, _this.displayEl[0], _this.calendarEl[0])) {
         _this.hide();
+      } else {
+        rangePickerDelegate.hideAllExcept(_this);
       }
-
-      e.stopPropagation();
     };
 
     this.clickedInside = function (t, e, o) {
@@ -664,10 +750,10 @@ module.exports = {
 };
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=nrp-picker>\n  <div class=nrp-range-display>\n    <div class=nrp-range-display-buttons ng-hide=$picker.editable>\n      <div class=btn-group role=group>\n        <button type=button class=\"btn nrp-range-button {{ $picker.buttonClass }}\" ng-click=\"$picker.openFor('startDate')\" ng-class=\"{ 'btn-primary active': $picker.targetDate == 'startDate' }\">\n          {{ $picker.ngModel.startDate.format($picker.displayFormat) || $picker.startPlaceholder }}\n        </button>\n        <button type=button class=\"btn nrp-range-button {{ $picker.buttonClass }}\" ng-click=\"$picker.openFor('endDate')\" ng-class=\"{ 'btn-primary active': $picker.targetDate == 'endDate' }\">\n          {{ $picker.ngModel.endDate.format($picker.displayFormat) || $picker.endPlaceholder }}\n        </button>\n      </div>\n      <div class=nrp-range-arrow></div>\n    </div>\n    <div class=nrp-range-input ng-show=$picker.editable>\n      <input class=\"form-control {{ $picker.inputClass }}\" type=text ng-keyup=$picker.inputChanged($event) ng-click=\"$picker.openFor('startDate')\" value=\"{{ $picker.inputValue() }}\" placeholder=\"{{ $picker.startPlaceholder + $picker.separator + $picker.endPlaceholder }}\"/>\n    </div>\n  </div>\n  <div class=nrp-range-display-calendar id={{$picker._id}} ng-class=\"{inline: $picker.inline}\" ng-show=$picker.shown>\n    <div class=nrp-range-display-calendar-ranges ng-show=\"$picker.ranges && $picker.ranges.length\">\n      <div class=\"nrp-calendar-range nrp-clickable\" ng-repeat=\"range in $picker.ranges\" ng-click=$picker.setRange(range)>\n        <div class=\"nrp-range nrp-centered\">{{ range.label }}</div>\n      </div>\n    </div>\n    <div class=nrp-range-display-calendar-calendar>\n      <div class=\"nrp-range-inputs form-inline\" ng-show=$picker.showDays>\n        <range-picker-input id=startDate ng-model=$picker.ngModel.startDate format=$picker.displayFormat placeholder=$picker.displayFormat></range-picker-input>\n        <range-picker-input id=endDate ng-model=$picker.ngModel.endDate format=$picker.displayFormat placeholder=$picker.displayFormat></range-picker-input>\n      </div>\n      <div class=\"nrp-range-calendar-header nrp-year\" ng-hide=$picker.showDays>\n        <div class=nrp-arrow-left ng-click=$picker.yearPagePrev()>\n          <button type=button class=\"btn btn-link btn-sm\">&lt;</button>\n        </div>\n        <div class=\"nrp-header-val nrp-centered nrp-clickable\" ng-click=\"$picker.switchView('years')\" ng-hide=$picker.showYears>\n          {{ $picker.displayDate.format($picker.yearFormat) }}\n        </div>\n        <div class=nrp-arrow-right ng-click=$picker.yearPageNext()>\n          <button type=button class=\"btn btn-link btn-sm\">&gt;</button>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-header nrp-month\" ng-show=$picker.showDays>\n        <div class=nrp-arrow-left ng-click=\"$picker.prev('month')\">\n          <button type=button class=\"btn btn-link btn-sm\">&lt;</button>\n        </div>\n        <div class=\"nrp-header-val nrp-centered nrp-clickable\" ng-click=\"$picker.switchView('months')\">\n          {{ $picker.displayDate.format($picker.monthFormat) }} {{ $picker.displayDate.format($picker.yearFormat) }}\n        </div>\n        <div class=nrp-arrow-right ng-click=\"$picker.next('month')\">\n          <button type=button class=\"btn btn-link btn-sm\">&gt;</button>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-body nrp-days\" ng-show=$picker.showDays>\n        <div class=nrp-day-name ng-repeat=\"dayLabel in $picker.dayLabels track by dayLabel\">\n          {{ dayLabel }}\n        </div>\n        <div class=\"nrp-calendar-day nrp-clickable\" ng-repeat=\"day in $picker.days track by $index\" ng-click=$picker.selectDay(day) ng-class=\"{ 'nrp-start': day.isStart, 'nrp-end': day.isEnd, 'nrp-selected': day.inRange || day.isStart || day.isEnd, 'nrp-current': day.isCurrent, 'nrp-invalid': !day.isValid }\">\n          <div class=\"nrp-day nrp-centered\" ng-class=\"{'nrp-off-month': day.value <= 0 || day.value > $picker.daysInMonth}\">\n            {{ day.label }}\n          </div>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-body nrp-months\" ng-show=$picker.showMonths>\n        <div class=\"nrp-calendar-month nrp-clickable\" ng-repeat=\"month in $picker.months track by $index\" ng-click=$picker.selectMonth(month) ng-class=\"{ 'nrp-start': month.isStart, 'nrp-end': month.isEnd, 'nrp-selected': month.inRange || month.isStart || month.isEnd, 'nrp-current': month.isCurrent, 'nrp-invalid': !month.isValid }\">\n          <div class=\"nrp-month nrp-centered\">\n            {{ month.label }}\n          </div>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-body nrp-years\" ng-show=$picker.showYears>\n        <div class=\"nrp-calendar-year nrp-clickable\" ng-repeat=\"year in $picker.years track by $index\" ng-click=$picker.selectYear(year) ng-class=\"{ 'nrp-start': year.isStart, 'nrp-end': year.isEnd, 'nrp-selected': year.inRange || year.isStart || year.isEnd, 'nrp-current': year.isCurrent, 'nrp-invalid': !year.isValid }\">\n          <div class=\"nrp-year nrp-centered\">\n            {{ year.label }}\n          </div>\n        </div>\n      </div>\n      <button type=button style=\"display:inline-block;margin:2px;width:calc(100% - 4px)\" class=\"btn btn-success btn-block\" ng-show=\"$picker.showDays && $picker.changedFromLast() && $picker.isValid()\" ng-click=$picker.runChanged(true)>\n        Select {{ $picker.ngModel.endDate.diff($picker.ngModel.startDate, 'days') + 1 }} day(s)\n      </button>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<div class=nrp-picker>\n  <div class=nrp-range-display>\n    <div class=nrp-range-display-buttons ng-hide=$picker.editable>\n      <div class=btn-group role=group>\n        <button type=button class=\"btn nrp-range-button {{ $picker.buttonClass }}\" ng-click=\"$picker.openFor('startDate')\" ng-class=\"{ 'btn-primary active': $picker.targetDate == 'startDate' }\">\n          {{ $picker.ngModel.startDate.format($picker.displayFormat) || $picker.startPlaceholder }}\n        </button>\n        <button type=button class=\"btn nrp-range-button {{ $picker.buttonClass }}\" ng-click=\"$picker.openFor('endDate')\" ng-class=\"{ 'btn-primary active': $picker.targetDate == 'endDate' }\">\n          {{ $picker.ngModel.endDate.format($picker.displayFormat) || $picker.endPlaceholder }}\n        </button>\n      </div>\n      <div class=nrp-range-arrow></div>\n    </div>\n    <div class=nrp-range-input ng-show=$picker.editable>\n      <input class=\"form-control {{ $picker.inputClass }}\" type=text ng-keyup=$picker.inputChanged($event) ng-click=\"$event.stopPropagation(); $picker.openFor('startDate')\" value=\"{{ $picker.inputValue() }}\" placeholder=\"{{ $picker.startPlaceholder + $picker.separator + $picker.endPlaceholder }}\"/>\n    </div>\n  </div>\n  <div class=nrp-range-display-calendar id={{$picker._id}} ng-class=\"{inline: $picker.inline}\" ng-show=$picker.shown>\n    <div class=nrp-range-display-calendar-ranges ng-show=\"$picker.ranges && $picker.ranges.length\">\n      <div class=\"nrp-calendar-range nrp-clickable\" ng-repeat=\"range in $picker.ranges\" ng-click=$picker.setRange(range)>\n        <div class=\"nrp-range nrp-centered\">{{ range.label }}</div>\n      </div>\n    </div>\n    <div class=nrp-range-display-calendar-calendar>\n      <div class=\"nrp-range-inputs form-inline\" ng-show=$picker.showDays>\n        <range-picker-input id=startDate ng-model=$picker.ngModel.startDate format=$picker.displayFormat placeholder=$picker.displayFormat></range-picker-input>\n        <range-picker-input id=endDate ng-model=$picker.ngModel.endDate format=$picker.displayFormat placeholder=$picker.displayFormat></range-picker-input>\n      </div>\n      <div class=\"nrp-range-calendar-header nrp-year\" ng-hide=$picker.showDays>\n        <div class=nrp-arrow-left ng-click=$picker.yearPagePrev()>\n          <button type=button class=\"btn btn-link btn-sm\">&lt;</button>\n        </div>\n        <div class=\"nrp-header-val nrp-centered nrp-clickable\" ng-click=\"$picker.switchView('years')\" ng-hide=$picker.showYears>\n          {{ $picker.displayDate.format($picker.yearFormat) }}\n        </div>\n        <div class=nrp-arrow-right ng-click=$picker.yearPageNext()>\n          <button type=button class=\"btn btn-link btn-sm\">&gt;</button>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-header nrp-month\" ng-show=$picker.showDays>\n        <div class=nrp-arrow-left ng-click=\"$picker.prev('month')\">\n          <button type=button class=\"btn btn-link btn-sm\">&lt;</button>\n        </div>\n        <div class=\"nrp-header-val nrp-centered nrp-clickable\" ng-click=\"$picker.switchView('months')\">\n          {{ $picker.displayDate.format($picker.monthFormat) }} {{ $picker.displayDate.format($picker.yearFormat) }}\n        </div>\n        <div class=nrp-arrow-right ng-click=\"$picker.next('month')\">\n          <button type=button class=\"btn btn-link btn-sm\">&gt;</button>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-body nrp-days\" ng-show=$picker.showDays>\n        <div class=nrp-day-name ng-repeat=\"dayLabel in $picker.dayLabels track by dayLabel\">\n          {{ dayLabel }}\n        </div>\n        <div class=\"nrp-calendar-day nrp-clickable\" ng-repeat=\"day in $picker.days track by $index\" ng-click=$picker.selectDay(day) ng-class=\"{ 'nrp-start': day.isStart, 'nrp-end': day.isEnd, 'nrp-selected': day.inRange || day.isStart || day.isEnd, 'nrp-current': day.isCurrent, 'nrp-invalid': !day.isValid }\">\n          <div class=\"nrp-day nrp-centered\" ng-class=\"{'nrp-off-month': day.value <= 0 || day.value > $picker.daysInMonth}\">\n            {{ day.label }}\n          </div>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-body nrp-months\" ng-show=$picker.showMonths>\n        <div class=\"nrp-calendar-month nrp-clickable\" ng-repeat=\"month in $picker.months track by $index\" ng-click=$picker.selectMonth(month) ng-class=\"{ 'nrp-start': month.isStart, 'nrp-end': month.isEnd, 'nrp-selected': month.inRange || month.isStart || month.isEnd, 'nrp-current': month.isCurrent, 'nrp-invalid': !month.isValid }\">\n          <div class=\"nrp-month nrp-centered\">\n            {{ month.label }}\n          </div>\n        </div>\n      </div>\n      <div class=\"nrp-range-calendar-body nrp-years\" ng-show=$picker.showYears>\n        <div class=\"nrp-calendar-year nrp-clickable\" ng-repeat=\"year in $picker.years track by $index\" ng-click=$picker.selectYear(year) ng-class=\"{ 'nrp-start': year.isStart, 'nrp-end': year.isEnd, 'nrp-selected': year.inRange || year.isStart || year.isEnd, 'nrp-current': year.isCurrent, 'nrp-invalid': !year.isValid }\">\n          <div class=\"nrp-year nrp-centered\">\n            {{ year.label }}\n          </div>\n        </div>\n      </div>\n      <button type=button style=\"display:inline-block;margin:2px;width:calc(100% - 4px)\" class=\"btn btn-success btn-block\" ng-show=\"$picker.showDays && $picker.changedFromLast() && $picker.isValid()\" ng-click=$picker.runChanged(true)>\n        Select {{ $picker.ngModel.endDate.diff($picker.ngModel.startDate, 'days') + 1 }} day(s)\n      </button>\n    </div>\n  </div>\n</div>\n";
 
 /***/ })
 /******/ ]);
