@@ -18,7 +18,7 @@ range-picker {
 }
 
 .nrp-range-display .nrp-range-display-buttons .btn-primary.active {
-  background: blue;
+  background: rgba(82,168,236,1);
 }
 
 .nrp-range-arrow:after {
@@ -98,6 +98,7 @@ range-picker {
   outline: thin dotted\9;
   -webkit-box-shadow: 0 0 8px rgba(82,168,236,.6);
   box-shadow: 0 0 8px rgba(82,168,236,.6);
+  background-color: rgba(82,168,236,.1);
 }
 
 
@@ -135,7 +136,7 @@ range-picker {
 }
 
 .nrp-range-display-calendar .nrp-clickable.nrp-selected {
-  background: blue;
+  background: rgba(82,168,236,1);
   color: white;
 }
 
@@ -150,7 +151,7 @@ range-picker {
 .nrp-range-display-calendar .nrp-current {
   font-weight: bold;
   font-size: 140%;
-  color: blue;
+  color: rgba(82,168,236,1);
 }
 
 .nrp-range-display-calendar .nrp-invalid {
@@ -227,4 +228,10 @@ range-picker {
 .nrp-range-display-calendar-calendar .nrp-range-calendar-body.nrp-months .nrp-calendar-month:not(.nrp-selected):hover,
 .nrp-range-display-calendar-calendar .nrp-range-calendar-body.nrp-years .nrp-calendar-year:not(.nrp-selected):hover {
   border-radius: 20px;
+}
+
+.nrp-num-days p {
+  text-align: right;
+  padding: 3px 8px 6px 8px;
+  margin: 0;
 }
