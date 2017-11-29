@@ -93,10 +93,7 @@ module.exports = {
   offsetBottom: 0,
   offsetLeft: 0,
   buttonClass: 'btn-default btn-sm',
-  inputClass: '',
-  preserveOnStateChange: false,
-  preserveOnRouteChange: false,
-  preserveOnLocationChange: false
+  inputClass: ''
 };
 
 /***/ }),
@@ -276,13 +273,10 @@ module.exports = {
     offsetBottom: '<',
     offsetLeft: '<',
     buttonClass: '@',
-    inputClass: '@',
-    preserveOnStateChange: '<',
-    preserveOnRouteChange: '<',
-    preserveOnLocationChange: '<'
+    inputClass: '@'
   },
   controllerAs: '$picker',
-  controller: ['$scope', '$element', '$timeout', 'rangePickerConfig', 'rangePickerDelegate', function ($scope, $element, $timeout, rangePickerConfig, rangePickerDelegate) {
+  controller: ['$scope', '$element', '$timeout', '$rootScope', 'rangePickerConfig', 'rangePickerDelegate', function ($scope, $element, $timeout, $rootScope, rangePickerConfig, rangePickerDelegate) {
     var _this = this;
 
     rangePickerDelegate.add(this);
@@ -316,9 +310,6 @@ module.exports = {
     this.offsetLeft = this.offsetLeft || rangePickerConfig.offsetLeft;
     this.buttonClass = this.buttonClass || rangePickerConfig.buttonClass;
     this.inputClass = this.inputClass || rangePickerConfig.inputClass;
-    this.preserveOnStateChange = typeof this.preserveOnStateChange == 'undefined' ? rangePickerConfig.preserveOnStateChange : this.preserveOnStateChange;
-    this.preserveOnRouteChange = typeof this.preserveOnRouteChange == 'undefined' ? rangePickerConfig.preserveOnRouteChange : this.preserveOnRouteChange;
-    this.preserveOnLocationChange = typeof this.preserveOnLocationChange == 'undefined' ? rangePickerConfig.preserveOnLocationChange : this.preserveOnLocationChange;
     this.minDate = this.minDate ? moment(this.minDate).startOf('day').hours(12) : null;
     this.maxDate = this.maxDate ? moment(this.maxDate).startOf('day').hours(12) : null;
     this.showDays = true;
@@ -351,21 +342,15 @@ module.exports = {
           _this.getDays(moment(n));
         }
       });
-      var routeChangeWatch = _this.preserveOnRouteChange ? _this.noop : $scope.$on('$routeChangeStart', function () {
-        rangePickerDelegate.hideAll();
-      });
-      var stateChangeWatch = _this.preserveOnStateChange ? _this.noop : $scope.$on('$stateChangeStart', function () {
-        rangePickerDelegate.hideAll();
-      });
-      var locationChangeWatch = _this.preserveOnLocationChange ? _this.noop : $scope.$on('$locationChangeStart', function () {
-        rangePickerDelegate.hideAll();
-      });
       $scope.$on('$destroy', function () {
+        _this.hide();
+
         startWatch();
         endWatch();
-        routeChangeWatch();
-        stateChangeWatch();
-        locationChangeWatch();
+
+        try {
+          $('#' + _this._id).remove();
+        } catch (e) {}
       });
     }; // on component destroyed
 
@@ -376,6 +361,10 @@ module.exports = {
       if (_this._tether) {
         _this._tether.destroy();
       }
+
+      try {
+        $('#' + _this._id).remove();
+      } catch (e) {}
     };
 
     this.inputValue = function () {
