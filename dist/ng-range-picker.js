@@ -183,17 +183,19 @@ module.exports = {
 
     this.$onInit = function () {
       _this.ngModelCtrl.$render = function () {
-        switch (_this.pickerCtrl.bindAs) {
-          case 'string':
-            _this.ngModel = moment(_this.ngModelCtrl.$modelValue).toISOString();
-            break;
+        if (_this.ngModelCtrl.$modelValue) {
+          switch (_this.pickerCtrl.bindAs) {
+            case 'string':
+              _this.ngModel = moment(_this.ngModelCtrl.$modelValue).toISOString();
+              break;
 
-          case 'date':
-            _this.ngModel = moment(_this.ngModelCtrl.$modelValue).toDate();
-            break;
+            case 'date':
+              _this.ngModel = moment(_this.ngModelCtrl.$modelValue).toDate();
+              break;
 
-          default:
-            _this.ngModel = moment(_this.ngModelCtrl.$modelValue);
+            default:
+              _this.ngModel = moment(_this.ngModelCtrl.$modelValue);
+          }
         }
       };
 
@@ -477,7 +479,7 @@ module.exports = {
 
     this.setDate = function (targetDate, date) {
       _this.ngModel = _this.ngModel || {};
-      _this.ngModel[targetDate] = moment(date);
+      _this.ngModel[targetDate] = date && moment(date);
     };
 
     this.setRange = function (range) {
