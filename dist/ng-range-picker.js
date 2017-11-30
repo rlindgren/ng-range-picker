@@ -279,7 +279,6 @@ module.exports = {
   controller: ['$scope', '$element', '$timeout', '$rootScope', 'rangePickerConfig', 'rangePickerDelegate', function ($scope, $element, $timeout, $rootScope, rangePickerConfig, rangePickerDelegate) {
     var _this = this;
 
-    rangePickerDelegate.add(this);
     this._id = 'range_picker_' + ++rangePickerConfig._currentId;
     this._tether = null;
     this.calendarEl;
@@ -408,11 +407,13 @@ module.exports = {
     };
 
     this.show = function () {
+      rangePickerDelegate.add(_this);
       _this.shown = true;
       $(document.body).on('click.' + _this._id, _this.clickWatcher);
     };
 
     this.hide = function () {
+      rangePickerDelegate.remove(_this);
       $(document.body).off('click.' + _this._id, _this.clickWatcher);
 
       if (_this.ngModel) {
