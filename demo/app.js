@@ -5,8 +5,8 @@ app.controller('appCtrl', function ($scope) {
   $scope.maxDate = moment().add(12, 'days');
 
   $scope.range = {
-    startDate: null,
-    endDate: null
+    startDate: moment().subtract(2, 'day'),
+    endDate: moment().add(2, 'day')
   };
 
   $scope.logChanged = (range) => {

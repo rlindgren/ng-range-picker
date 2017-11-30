@@ -287,8 +287,8 @@ module.exports = {
 
     this.setLastModel = function () {
       _this.lastModel = {
-        startDate: _this.ngModel && _this.ngModel.startDate,
-        endDate: _this.ngModel && _this.ngModel.endDate
+        startDate: _this.ngModel && _this.ngModel.startDate && moment(_this.ngModel.startDate),
+        endDate: _this.ngModel && _this.ngModel.endDate && moment(_this.ngModel.endDate)
       };
     };
 
@@ -414,6 +414,12 @@ module.exports = {
 
     this.hide = function () {
       $(document.body).off('click.' + _this._id, _this.clickWatcher);
+
+      if (_this.ngModel) {
+        _this.ngModel.startDate = _this.lastModel.startDate;
+        _this.ngModel.endDate = _this.lastModel.endDate;
+      }
+
       $timeout(function () {
         if (!_this.inline) {
           _this.shown = false;
@@ -716,8 +722,6 @@ module.exports = {
 
       if (_this.shown && !_this.clickedInside(e.target, _this.displayEl[0], _this.calendarEl[0])) {
         _this.hide();
-      } else {
-        rangePickerDelegate.hideAllExcept(_this);
       }
     };
 
